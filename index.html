@@ -1,74 +1,95 @@
 <!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Fitness Planner</title>
   <style>
     :root{
-      --bg:#fafafa; --card:#fff; --text:#111; --muted:#555; --accent:#111;
+      --bg:#f5f5f5;--text:#222;--card:#fff;--accent:#8b5cf6;
     }
     body.dark{
-      --bg:#121212; --card:#1e1e1e; --text:#f5f5f5; --muted:#aaa; --accent:#f5f5f5;
+      --bg:#121212;--text:#eee;--card:#1e1e1e;--accent:#a78bfa;
     }
-    body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text);padding:20px;margin:0;transition:.3s;}
-    h1,h2,h3{font-weight:500;}
-    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-    .toggle{cursor:pointer;border:1px solid var(--accent);padding:6px 10px;border-radius:20px;background:none;color:var(--text);}
-    .week{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:40px;}
-    .day{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,.05);}
-    .day.completed{opacity:.5;text-decoration:line-through;}
-    .minutes{font-size:14px;color:var(--muted);} 
-    a{color:var(--accent);} 
-    button{margin-top:10px;padding:6px 10px;border:none;border-radius:8px;background:var(--accent);color:var(--bg);cursor:pointer;}/* Calendario mensual */
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
-.cal-day{background:var(--card);padding:10px;border-radius:10px;font-size:12px;min-height:60px;}
-.cal-day.done{background:rgba(0,150,0,.15);} 
-.cal-head{font-weight:600;text-align:center;}
-
+    body{margin:0;font-family:sans-serif;background:var(--bg);color:var(--text);}
+    .topbar{padding:16px;display:flex;justify-content:space-between;align-items:center;}
+    .container{padding:16px;max-width:900px;margin:auto;}
+    .week,.month{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+    .day{background:var(--card);padding:12px;border-radius:12px;cursor:pointer;}
+    .day.completed{opacity:.6;text-decoration:line-through;}
+    button{padding:6px 10px;border:none;border-radius:8px;cursor:pointer;}
+    .nav{display:flex;gap:8px;margin:12px 0;}
   </style>
 </head>
-<body><div class="topbar">
-  <h1>Mi Fitness Planner – 4 semanas</h1>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div style="width:120px;">
-      <div style="font-size:12px;">Progreso</div>
-      <div style="background:var(--card);border-radius:20px;overflow:hidden;height:10px;">
-        <div id="progressBar" style="height:100%;width:0%;background:var(--accent);"></div>
-      </div>
-      <div id="progressText" style="font-size:12px;margin-top:4px;">0%</div>
+<body>
+<div class="topbar">
+  <h1>Mi Fitness Planner</h1>
+  <div>
+    <div style="font-size:12px">Progreso</div>
+    <div style="width:120px;height:10px;background:var(--card);border-radius:10px;overflow:hidden">
+      <div id="progressBar" style="height:100%;width:0;background:var(--accent)"></div>
     </div>
-    <button class="toggle" onclick="toggleDark()">🌙 / ☀️</button>
+    <div id="progressText" style="font-size:12px">0%</div>
+    <button onclick="toggleDark()">🌙 / ☀️</button>
   </div>
-</div>
-<p>Horario sugerido: 8:00–9:00 pm</p><h2>Vista semanal (Semana 1)</h2>
-<div class="week">
-  <div class="day" onclick="toggle(this)"><h3>Lunes · Abs</h3><p class="minutes">30–35 min</p><a href="https://www.youtube.com/watch?v=2pLT-olgUJs" target="_blank">Video</a><button>✓</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Martes · Cardio</h3><p class="minutes">40–45 min</p><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Video</a><button>✓</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Miércoles · Pilates</h3><p class="minutes">30–35 min</p><a href="https://www.youtube.com/watch?v=sF8NwVYp3js" target="_blank">Video</a><button>✓</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Jueves · Fuerza</h3><p class="minutes">40–45 min</p><a href="https://www.youtube.com/watch?v=Rj2fC8t7wL8" target="_blank">Video</a><button>✓</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Viernes · Cardio</h3><p class="minutes">30–35 min</p><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Video</a><button>✓</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Sábado · Stretch</h3><p class="minutes">35–40 min</p><a href="https://www.youtube.com/watch?v=8Z2h6N7k7wY" target="_blank">Video</a><button>✓</button></div>
-</div><h2>Vista mensual (progreso)</h2>
-<div class="calendar">
-  <div class="cal-head">L</div><div class="cal-head">M</div><div class="cal-head">M</div><div class="cal-head">J</div><div class="cal-head">V</div><div class="cal-head">S</div><div class="cal-head">D</div>
-  <div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day done">3 ✔</div><div class="cal-day">4</div><div class="cal-day done">5 ✔</div><div class="cal-day">6</div><div class="cal-day">7</div>
-  <div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div>
+</div><div class="container">
+  <div class="nav">
+    <button onclick="prevWeek()">◀ Semana</button>
+    <button onclick="nextWeek()">Semana ▶</button>
+    <button onclick="showToday()">Solo hoy</button>
+  </div>  <h2 id="weekTitle"></h2>
+  <div id="weekView" class="week"></div>  <h2>Calendario mensual</h2>
+  <div id="monthView" class="month"></div>
 </div><script>
-const TOTAL_DAYS = 24; // 6 días x 4 semanas
-let completed = 0;
+const plan = [
+  [
+    {day:'Lunes',title:'Abs',time:'30–35 min',by:'Chloe Ting',url:'https://www.youtube.com/watch?v=2pLT-olgUJs'},
+    {day:'Martes',title:'Cardio',time:'40–45 min',by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=ml6cT4AZdqI'},
+    {day:'Miércoles',title:'Pilates',time:'30–35 min',by:'Move With Nicole',url:'https://www.youtube.com/watch?v=sF8NwVYp3js'},
+    {day:'Jueves',title:'Fuerza',time:'40–45 min',by:'Pau Fit',url:'https://www.youtube.com/watch?v=Rj2fC8t7wL8'},
+    {day:'Viernes',title:'Cardio',time:'30–35 min',by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=ml6cT4AZdqI'},
+    {day:'Sábado',title:'Stretch',time:'35–40 min',by:'Stretch',url:'https://www.youtube.com/watch?v=8Z2h6N7k7wY'}
+  ],
+  // semanas 2–4 (mismo patrón, videos distintos)
+];
 
-function toggle(el){
-  el.classList.toggle('completed');
-  updateProgress();
+let week = Number(localStorage.getItem('week')) || 0;
+let completed = JSON.parse(localStorage.getItem('completed')||'{}');
+
+function render(){
+  document.getElementById('weekTitle').innerText = `Semana ${week+1}`;
+  const w = document.getElementById('weekView'); w.innerHTML='';
+  plan[0].forEach((d,i)=>{
+    const id = `${week}-${i}`;
+    const div = document.createElement('div');
+    div.className = 'day'+(completed[id]?' completed':'');
+    div.onclick=()=>toggle(id,div);
+    div.innerHTML=`<h3>${d.day} · ${d.title}</h3><p>${d.time} · ${d.by}</p><a href="${d.url}" target="_blank">Ir al video</a>`;
+    w.appendChild(div);
+  });
+  renderMonth(); updateProgress();
 }
 
-function toggleDark(){ document.body.classList.toggle('dark'); }
-
+function toggle(id,el){completed[id]=!completed[id];localStorage.setItem('completed',JSON.stringify(completed));render();}
 function updateProgress(){
-  completed = document.querySelectorAll('.day.completed').length;
-  const percent = Math.round((completed / TOTAL_DAYS) * 100);
-  document.getElementById('progressBar').style.width = percent + '%';
-  document.getElementById('progressText').innerText = percent + '% completado';
+  const total=24;
+  const done=Object.values(completed).filter(Boolean).length;
+  const p=Math.round(done/total*100);
+  progressBar.style.width=p+'%';progressText.innerText=p+'%';
 }
+function toggleDark(){document.body.classList.toggle('dark');localStorage.setItem('dark',document.body.classList.contains('dark'));}
+function prevWeek(){if(week>0){week--;localStorage.setItem('week',week);render();}}
+function nextWeek(){if(week<3){week++;localStorage.setItem('week',week);render();}}
+function showToday(){week=0;render();}
+function renderMonth(){
+  const m=document.getElementById('monthView');m.innerHTML='';
+  for(let i=0;i<24;i++){
+    const div=document.createElement('div');
+    div.className='day'+(completed[Math.floor(i/6)+'-'+(i%6)]?' completed':'');
+    div.innerText='Día '+(i+1);
+    m.appendChild(div);
+  }
+}
+
+if(localStorage.getItem('dark')==='true')document.body.classList.add('dark');
+render();
 </script></body>
 </html>
