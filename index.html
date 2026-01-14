@@ -1,29 +1,98 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Fitness Planner</title>
-  <style>
-    :root{--bg:#f5f5f5;--text:#222;--card:#fff;--accent:#8b5cf6;--muted:#999}
-    body.dark{--bg:#121212;--text:#eee;--card:#1e1e1e;--accent:#a78bfa;--muted:#666}
-    body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--text)}
-    .topbar{padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-    .container{padding:16px;max-width:1000px;margin:auto}
-    .nav{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
-    .week{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-    .day{background:var(--card);padding:12px;border-radius:14px;cursor:pointer}
-    .day.completed{opacity:.6;text-decoration:line-through}
-    .day.rest{opacity:.5;background:rgba(0,0,0,.05)}
-    .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-    .cal-day{background:var(--card);padding:8px;border-radius:10px;font-size:12px;min-height:60px}
-    .cal-day.completed{background:rgba(139,92,246,.25)}
-    .cal-day.rest{background:rgba(100,100,100,.15)}
-    .cal-head{font-weight:600;text-align:center}
-    button{padding:8px 12px;border:none;border-radius:10px;cursor:pointer;background:var(--card);color:var(--text);border:1px solid rgba(0,0,0,.15)}
-body.dark button{background:#2a2a2a;color:#eee;border:1px solid #444}
-    @media(max-width:600px){.topbar h1{font-size:18px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Fitness Planner</title>
+
+<style>
+:root{
+  --bg:#f5f5f5;
+  --text:#222;
+  --card:#fff;
+  --accent:#8b5cf6;
+  --muted:#999;
+}
+body.dark{
+  --bg:#121212;
+  --text:#eee;
+  --card:#1e1e1e;
+  --accent:#a78bfa;
+  --muted:#666;
+}
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.topbar{
+  padding:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.container{
+  padding:16px;
+  max-width:1000px;
+  margin:auto;
+}
+.nav{
+  display:flex;
+  gap:8px;
+  margin:12px 0;
+  flex-wrap:wrap;
+}
+.week{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+}
+.day{
+  background:var(--card);
+  padding:12px;
+  border-radius:14px;
+  cursor:pointer;
+}
+.day.completed{
+  opacity:.6;
+  text-decoration:line-through;
+}
+.day.rest{
+  opacity:.5;
+  background:rgba(0,0,0,.05);
+}
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+.cal-day{
+  background:var(--card);
+  padding:8px;
+  border-radius:10px;
+  font-size:12px;
+  min-height:60px;
+}
+.cal-day.completed{background:rgba(139,92,246,.25)}
+.cal-day.rest{background:rgba(100,100,100,.15)}
+.cal-head{
+  font-weight:600;
+  text-align:center;
+}
+button{
+  padding:8px 12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:var(--card);
+  color:var(--text);
+}
+</style>
 </head>
+
 <body>
 <div class="topbar">
   <h1>Mi Fitness Planner · 4 semanas</h1>
@@ -35,162 +104,216 @@ body.dark button{background:#2a2a2a;color:#eee;border:1px solid #444}
     <div id="progressText" style="font-size:12px">0%</div>
     <button onclick="toggleDark()">🌙 / ☀️</button>
   </div>
-</div><div class="container">
+</div>
+
+<div class="container">
   <div class="nav">
     <button onclick="prevWeek()">◀ Semana</button>
     <button onclick="nextWeek()">Semana ▶</button>
     <button onclick="showToday()">Hoy</button>
     <button onclick="toggleLightWeek()">Semana ligera</button>
     <button onclick="markRest()">Descanso hoy</button>
-  </div>  <h2 id="weekTitle"></h2>
-  <div id="weekView" class="week"></div>  <h2>Calendario mensual</h2>
+  </div>
+
+  <h2 id="weekTitle"></h2>
+  <div id="weekView" class="week"></div>
+
+  <h2>Calendario mensual</h2>
   <div id="monthTitle"></div>
   <div id="monthView" class="calendar"></div>
-</div><script>
-// ===== CONFIGURACIÓN DE INICIO DEL RETO =====
-const START_DATE = new Date('2026-01-12'); // lunes 12 de enero
+</div>
 
-// ===== PLAN 4 SEMANAS (VARIADO) =====
-// Mezcla creadores para que no se sienta repetitivo y cuide el cuerpo
-const plan=[
+<script>
+// ================= CONFIG =================
+const START_DATE = new Date('2026-01-12');
+
+// ================= PLAN =================
+const plan = [
 [
-{day:'Lunes',title:'Full Body Low Impact',time:35,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=2pLT-olgUJs'},
-{day:'Martes',title:'Pilates Flow',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=sF8NwVYp3js'},
-{day:'Miércoles',title:'Cardio Suave',time:35,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=ml6cT4AZdqI'},
-{day:'Jueves',title:'Fuerza Glúteo & Pierna',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=Rj2fC8t7wL8'},
-{day:'Viernes',title:'Pilates Abs',time:35,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=VKxv6f5J8xw'},
-{day:'Sábado',title:'Stretch & Mobility',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=8Z2h6N7k7wY'}]
-,
+{day:'Lunes',title:'Abs',time:35,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=2pLT-olgUJs'},
+{day:'Martes',title:'Pilates',time:35,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=sF8NwVYp3js'},
+{day:'Miércoles',title:'Cardio',time:45,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=ml6cT4AZdqI'},
+{day:'Jueves',title:'Fuerza',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=Rj2fC8t7wL8'},
+{day:'Viernes',title:'Cardio',time:35,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=0k6H0xkQp1E'},
+{day:'Sábado',title:'Stretch',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=8Z2h6N7k7wY'}
+],
 [
-{day:'Lunes',title:'Cardio Low Impact',time:40,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=F6x3F6ZC3Jk'},
-{day:'Martes',title:'Pilates Full Body',time:35,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=lCg_gh_fppI'},
-{day:'Miércoles',title:'Abs & Core',time:35,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=VKxv6f5J8xw'},
-{day:'Jueves',title:'Fuerza Tren Superior',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=8KqvX5K6L5U'},
-{day:'Viernes',title:'Pilates Flow',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=JZ7s1mJjZxQ'},
-{day:'Sábado',title:'Stretch',time:40,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=Eml2xnoLpYE'}]
-,
+{day:'Lunes',title:'Full Body',time:40,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=Yjm2R1h5Q9Y'},
+{day:'Martes',title:'Abs',time:35,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=VKxv6f5J8xw'},
+{day:'Miércoles',title:'Pilates',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=lCg_gh_fppI'},
+{day:'Jueves',title:'Cardio',time:45,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=F6x3F6ZC3Jk'},
+{day:'Viernes',title:'Fuerza',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=8KqvX5K6L5U'},
+{day:'Sábado',title:'Stretch',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=JZ7s1mJjZxQ'}
+],
 [
-{day:'Lunes',title:'Pilates Power',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=K56Z12XNQ5Y'},
-{day:'Martes',title:'Cardio Intermedio',time:50,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=VHyGqsPOUHs'},
-{day:'Miércoles',title:'Fuerza Pierna',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=3S5l9Z4cZYo'},
-{day:'Jueves',title:'Abs & Core',time:40,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=9pGfKkYzY7M'},
-{day:'Viernes',title:'Full Body',time:40,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=9yG0Z0nYzYI'},
-{day:'Sábado',title:'Stretch Deep',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=Eml2xnoLpYE'}]
-,
+{day:'Lunes',title:'Abs',time:40,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=9pGfKkYzY7M'},
+{day:'Martes',title:'Cardio',time:50,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=VHyGqsPOUHs'},
+{day:'Miércoles',title:'Pilates',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=K56Z12XNQ5Y'},
+{day:'Jueves',title:'Fuerza',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=3S5l9Z4cZYo'},
+{day:'Viernes',title:'Full Body',time:40,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=9yG0Z0nYzYI'},
+{day:'Sábado',title:'Stretch',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=Eml2xnoLpYE'}
+],
 [
-{day:'Lunes',title:'Cardio + Core',time:45,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=4U9vKz0o2Hg'},
-{day:'Martes',title:'Pilates Full Body',time:40,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=v0q3jKz9E0Q'},
-{day:'Miércoles',title:'Fuerza Glúteo',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=2K1p8mFz1JQ'},
-{day:'Jueves',title:'Abs Burn',time:40,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=3p8EBPVZ2Iw'},
-{day:'Viernes',title:'Pilates Flow',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=1Xx5ZK2Y9Hg'},
-{day:'Sábado',title:'Stretch & Relax',time:45,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=Zk5Wz6P1Y8M'}]
+{day:'Lunes',title:'Full Body',time:45,by:'Steph Delmor',url:'https://www.youtube.com/watch?v=3p8EBPVZ2Iw'},
+{day:'Martes',title:'Abs',time:40,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=3p8EBPVZ2Iw'},
+{day:'Miércoles',title:'Cardio',time:50,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=4U9vKz0o2Hg'},
+{day:'Jueves',title:'Pilates',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=v0q3jKz9E0Q'},
+{day:'Viernes',title:'Fuerza',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=2K1p8mFz1JQ'},
+{day:'Sábado',title:'Stretch',time:45,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=Zk5Wz6P1Y8M'}
+]
 ];
 
-// ===== ESTADO =====
-let completed=JSON.parse(localStorage.getItem('completed')||'{}');
-let restDays=JSON.parse(localStorage.getItem('rest')||'{}');
-let lightWeek=localStorage.getItem('light')==='true';
+// ================= STATE =================
+let completed = JSON.parse(localStorage.getItem('completed') || '{}');
+let restDays = JSON.parse(localStorage.getItem('rest') || '{}');
+let lightWeek = localStorage.getItem('light') === 'true';
+
 const progressBar = document.getElementById('progressBar');
 const progressText = document.getElementById('progressText');
-let currentWeek=null; // semana que el usuario está viendo
 
-function daysBetween(a,b){return Math.floor((b-a)/(1000*60*60*24));}
+let currentWeek = null;
+
+// ================= FUNCTIONS =================
+function daysBetween(a,b){
+  return Math.floor((b-a)/(1000*60*60*24));
+}
 
 function getTodayIndex(){
-  const today=new Date();
-  const diff=daysBetween(START_DATE,today);
-  return diff>=0?diff:null;
+  const today = new Date();
+  const diff = daysBetween(START_DATE, today);
+  return diff >= 0 ? diff : null;
 }
 
 function getWeek(){
-  if(currentWeek!==null) return currentWeek;
-  const idx=getTodayIndex();
-  return idx!==null?Math.min(3,Math.floor(idx/6)):0;
+  const idx = getTodayIndex();
+  return idx !== null ? Math.min(3, Math.floor(idx/6)) : 0;
 }
 
 function render(){
-  const week=getWeek();
-  document.getElementById('weekTitle').innerText=`Semana ${week+1}${lightWeek?' · Ligera':''}`;
-  const w=document.getElementById('weekView');w.innerHTML='';
+  const week = currentWeek;
+  document.getElementById('weekTitle').innerText =
+    `Semana ${week+1}${lightWeek?' · Ligera':''}`;
+
+  const w = document.getElementById('weekView');
+  w.innerHTML = '';
+
   plan[week].forEach((d,i)=>{
-    const globalIndex=week*6+i;
-    const id=globalIndex;
-    let time=d.time;
-    if(lightWeek)time=Math.max(20,Math.round(d.time*0.7));
-    const div=document.createElement('div');
-    div.className='day'+(completed[id]?' completed':'')+(restDays[id]?' rest':'');
-    div.onclick=()=>toggle(id);
-    div.innerHTML=`<h3>${d.day} · ${d.title}</h3><p>${time} min · ${d.by}</p><a href="${d.url}" target="_blank">Ir al video</a>`;
+    const id = week*6+i;
+    let time = lightWeek ? Math.max(20, Math.round(d.time*0.7)) : d.time;
+
+    const div = document.createElement('div');
+    div.className =
+      'day' +
+      (completed[id]?' completed':'') +
+      (restDays[id]?' rest':'');
+
+    div.onclick = ()=>toggle(id);
+
+    div.innerHTML = `
+      <h3>${d.day} · ${d.title}</h3>
+      <p>${time} min · ${d.by}</p>
+      <a href="${d.url}" target="_blank">Ir al video</a>
+    `;
     w.appendChild(div);
   });
-  renderMonth();updateProgress();
+
+  renderMonth();
+  updateProgress();
 }
 
-function toggle(id){if(restDays[id])return;completed[id]=!completed[id];localStorage.setItem('completed',JSON.stringify(completed));render();}
+function toggle(id){
+  if(restDays[id]) return;
+  completed[id] = !completed[id];
+  localStorage.setItem('completed', JSON.stringify(completed));
+  render();
+}
+
 function markRest(){
-  const idx=getTodayIndex();
-  if(idx===null) return;
-  if(restDays[idx]) delete restDays[idx];
-  else restDays[idx]=true;
-  localStorage.setItem('rest',JSON.stringify(restDays));
+  const idx = getTodayIndex();
+  if(idx !== null){
+    restDays[idx] = !restDays[idx];
+    localStorage.setItem('rest', JSON.stringify(restDays));
+    render();
+  }
+}
+
+function toggleLightWeek(){
+  lightWeek = !lightWeek;
+  localStorage.setItem('light', lightWeek);
   render();
-}}
-function toggleLightWeek(){lightWeek=!lightWeek;localStorage.setItem('light',lightWeek);render();}
-function updateProgress(){const total=24;const done=Object.values(completed).filter(Boolean).length;const p=Math.round(done/total*100);progressBar.style.width=p+'%';progressText.innerText=p+'%';}
-function toggleDark(){document.body.classList.toggle('dark');localStorage.setItem('dark',document.body.classList.contains('dark'));}
+}
+
+function updateProgress(){
+  const total = 24;
+  const done = Object.values(completed).filter(Boolean).length;
+  const p = Math.round(done/total*100);
+  progressBar.style.width = p+'%';
+  progressText.innerText = p+'%';
+}
+
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  localStorage.setItem('dark', document.body.classList.contains('dark'));
+}
+
 function prevWeek(){
-  const w=getWeek();
-  currentWeek=Math.max(0,w-1);
-  render();
+  if(currentWeek > 0){
+    currentWeek--;
+    render();
+  }
 }
 function nextWeek(){
-  const w=getWeek();
-  currentWeek=Math.min(3,w+1);
-  render();
+  if(currentWeek < plan.length-1){
+    currentWeek++;
+    render();
+  }
 }
 function showToday(){
-  const idx=getTodayIndex();
-  if(idx===null) return;
-  const week=Math.floor(idx/6);
-  const day=idx%6;
-  currentWeek=week;
-  const w=document.getElementById('weekView');
-  w.innerHTML='';
-  const d=plan[week][day];
-  const id=idx;
-  const div=document.createElement('div');
-  div.className='day'+(completed[id]?' completed':'')+(restDays[id]?' rest':'');
-  div.onclick=()=>toggle(id);
-  div.innerHTML=`<h3>Hoy · ${d.title}</h3><p>${d.time} min · ${d.by}</p><a href="${d.url}" target="_blank">Ir al video</a>`;
-  w.appendChild(div);
-  document.getElementById('weekTitle').innerText='Entrenamiento de hoy';
+  currentWeek = getWeek();
+  render();
 }
 
 function renderMonth(){
-  const m=document.getElementById('monthView');m.innerHTML='';
-  const t=document.getElementById('monthTitle');
-  const base=new Date(START_DATE);
-  const today=new Date();
-  const view=new Date(today.getFullYear(),today.getMonth(),1);
-  t.innerText=view.toLocaleString('es',{month:'long',year:'numeric'});
-  const first=new Date(view.getFullYear(),view.getMonth(),1);
-  const last=new Date(view.getFullYear(),view.getMonth()+1,0);
-  const days=['L','M','X','J','V','S','D'];
-  days.forEach(x=>{const h=document.createElement('div');h.className='cal-head';h.innerText=x;m.appendChild(h);});
-  let offset=(first.getDay()+6)%7;
-  for(let i=0;i<offset;i++)m.appendChild(document.createElement('div'));
+  const m = document.getElementById('monthView');
+  const t = document.getElementById('monthTitle');
+  m.innerHTML = '';
+
+  const today = new Date();
+  const view = new Date(today.getFullYear(), today.getMonth(), 1);
+  t.innerText = view.toLocaleString('es',{month:'long',year:'numeric'});
+
+  const days = ['L','M','X','J','V','S','D'];
+  days.forEach(d=>{
+    const h=document.createElement('div');
+    h.className='cal-head';
+    h.innerText=d;
+    m.appendChild(h);
+  });
+
+  const first = new Date(view.getFullYear(), view.getMonth(), 1);
+  const last = new Date(view.getFullYear(), view.getMonth()+1, 0);
+  let offset = (first.getDay()+6)%7;
+
+  for(let i=0;i<offset;i++) m.appendChild(document.createElement('div'));
+
   for(let i=1;i<=last.getDate();i++){
-    const date=new Date(view.getFullYear(),view.getMonth(),i);
-    const idx=daysBetween(base,date);
-    const c=document.createElement('div');c.className='cal-day';
-    if(completed[idx])c.classList.add('completed');
-    if(restDays[idx])c.classList.add('rest');
-    c.innerHTML=`<strong>${i}</strong>`;
+    const date = new Date(view.getFullYear(), view.getMonth(), i);
+    const idx = daysBetween(START_DATE, date);
+    const c = document.createElement('div');
+    c.className='cal-day';
+    if(completed[idx]) c.classList.add('completed');
+    if(restDays[idx]) c.classList.add('rest');
+    c.innerHTML = `<strong>${i}</strong>`;
     m.appendChild(c);
   }
 }
 
-if(localStorage.getItem('dark')==='true')document.body.classList.add('dark');
+// ================= INIT =================
+if(localStorage.getItem('dark')==='true'){
+  document.body.classList.add('dark');
+}
+currentWeek = getWeek();
 render();
-</script></body>
+</script>
+</body>
 </html>
