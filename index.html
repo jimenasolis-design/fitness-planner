@@ -1,117 +1,80 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Planner Fitness</title>
+  <title>Mi Fitness Planner</title>
   <style>
-    :root {
-      --bg: #fafafa;
-      --card: #ffffff;
-      --text: #1f1f1f;
-      --muted: #8a8a8a;
-      --accent: #d9d9d9;
-    }
     body {
+      font-family: Arial, sans-serif;
+      background: #fafafa;
+      color: #111;
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      padding: 20px;
     }
-    header {
-      padding: 1.5rem;
-      border-bottom: 1px solid var(--accent);
-    }
-    header h1 {
-      margin: 0;
+    h1, h2 {
       font-weight: 500;
     }
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1.5rem;
-    }
-    .views {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .views button {
-      background: none;
-      border: 1px solid var(--accent);
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-    }
-    .calendar {
+    .week {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
     }
     .day {
-      background: var(--card);
-      border: 1px solid var(--accent);
-      padding: 0.75rem;
-      min-height: 120px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-    .day h3 {
-      margin: 0 0 0.5rem 0;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-    .workout {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .done {
-      margin-top: 0.5rem;
-      font-size: 0.75rem;
-      cursor: pointer;
-    }
-    .done.completed {
+    .day.completed {
+      opacity: 0.5;
       text-decoration: line-through;
-      color: var(--text);
+    }
+    .minutes {
+      font-size: 14px;
+      color: #555;
+    }
+    a {
+      color: #000;
+      text-decoration: underline;
+    }
+    button {
+      margin-top: 10px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 8px;
+      background: #111;
+      color: #fff;
+      cursor: pointer;
     }
   </style>
 </head>
-<body>
-  <header>
-    <h1>Planner Fitness Personal</h1>
-  </header>
-
-  <div class="container">
-    <div class="views">
-      <button>Vista mensual</button>
-      <button>Vista semanal</button>
-    </div>
-
-    <div class="calendar">
-      <div class="day">
-        <h3>1</h3>
-        <div class="workout">Pilates – Move with Nicole</div>
-        <div class="done">✔ completado</div>
-      </div>
-      <div class="day">
-        <h3>2</h3>
-        <div class="workout">Descanso</div>
-      </div>
-      <div class="day">
-        <h3>3</h3>
-        <div class="workout">Cardio – Fausto Murillo</div>
-        <div class="done">✔ completado</div>
-      </div>
-      <!-- El resto de los días se generan con JS -->
-    </div>
-  </div>
-
-  <script>
-    document.querySelectorAll('.done').forEach(btn => {
-      btn.addEventListener('click', () => {
-        btn.classList.toggle('completed');
-      });
-    });
-  </script>
-</body>
-</html>
+<body><h1>Mi plan de entrenamiento – 4 semanas</h1>
+<p>Horario sugerido: 8:00–9:00 pm</p><h2>Semana tipo</h2>
+<div class="week">  <div class="day" onclick="toggle(this)">
+    <h3>Lunes – Abs & Core</h3>
+    <p class="minutes">30–35 min</p>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=2pLT-olgUJs" target="_blank">Chloe Ting – Abs</a></li>
+      <li><a href="https://www.youtube.com/watch?v=lCg_gh_fppI" target="_blank">Move With Nicole – Core Pilates</a></li>
+    </ul>
+    <button>✓ Completado</button>
+  </div>  <div class="day" onclick="toggle(this)">
+    <h3>Martes – Cardio</h3>
+    <p class="minutes">40–50 min</p>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Fausto Murillo – Cardio</a></li>
+    </ul>
+    <button>✓ Completado</button>
+  </div>  <div class="day" onclick="toggle(this)">
+    <h3>Miércoles – Pilates</h3>
+    <p class="minutes">30–35 min</p>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=sF8NwVYp3js" target="_blank">Move With Nicole – Full Body Pilates</a></li>
+    </ul>
+    <button>✓ Completado</button>
+  </div>  <div class="day" onclick="toggle(this)">
+    <h3>Jueves – Fuerza</h3>
+    <p class="minutes">40–50 min</p>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=Rj2fC8t7wL8" target="_blank">Pau Fit – Pierna y glúteo</a></li>
+      <li><a href="https://www.youtube.com/watch?v=6u0zGJ0KfIw" target="_blank">
