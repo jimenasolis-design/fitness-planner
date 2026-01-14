@@ -4,50 +4,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Fitness Planner</title>
   <style>
-    body { font-family: Arial, sans-serif; background:#fafafa; color:#111; padding:20px; }
-    h1,h2 { font-weight:500; }
-    .week { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:40px; }
-    .day { background:#fff; border-radius:14px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,.05); }
-    .day.completed { opacity:.5; text-decoration:line-through; }
-    .minutes { font-size:14px; color:#555; }
-    a { color:#000; text-decoration:underline; }
-    button { margin-top:10px; padding:6px 10px; border:none; border-radius:8px; background:#111; color:#fff; cursor:pointer; }
+    :root{
+      --bg:#fafafa; --card:#fff; --text:#111; --muted:#555; --accent:#111;
+    }
+    body.dark{
+      --bg:#121212; --card:#1e1e1e; --text:#f5f5f5; --muted:#aaa; --accent:#f5f5f5;
+    }
+    body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text);padding:20px;margin:0;transition:.3s;}
+    h1,h2,h3{font-weight:500;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .toggle{cursor:pointer;border:1px solid var(--accent);padding:6px 10px;border-radius:20px;background:none;color:var(--text);}
+    .week{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:40px;}
+    .day{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,.05);}
+    .day.completed{opacity:.5;text-decoration:line-through;}
+    .minutes{font-size:14px;color:var(--muted);} 
+    a{color:var(--accent);} 
+    button{margin-top:10px;padding:6px 10px;border:none;border-radius:8px;background:var(--accent);color:var(--bg);cursor:pointer;}/* Calendario mensual */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.cal-day{background:var(--card);padding:10px;border-radius:10px;font-size:12px;min-height:60px;}
+.cal-day.done{background:rgba(0,150,0,.15);} 
+.cal-head{font-weight:600;text-align:center;}
+
   </style>
 </head>
-<body><h1>Mi plan de entrenamiento – 4 semanas</h1>
-<p>Horario sugerido: 8:00–9:00 pm</p><!-- SEMANA 1 --><h2>Semana 1 · Volver a moverte</h2>
+<body><div class="topbar">
+  <h1>Mi Fitness Planner – 4 semanas</h1>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="width:120px;">
+      <div style="font-size:12px;">Progreso</div>
+      <div style="background:var(--card);border-radius:20px;overflow:hidden;height:10px;">
+        <div id="progressBar" style="height:100%;width:0%;background:var(--accent);"></div>
+      </div>
+      <div id="progressText" style="font-size:12px;margin-top:4px;">0%</div>
+    </div>
+    <button class="toggle" onclick="toggleDark()">🌙 / ☀️</button>
+  </div>
+</div>
+<p>Horario sugerido: 8:00–9:00 pm</p><h2>Vista semanal (Semana 1)</h2>
 <div class="week">
-  <div class="day" onclick="toggle(this)"><h3>Lunes · Abs</h3><p class="minutes">30–35 min</p><ul><li><a href="https://www.youtube.com/watch?v=2pLT-olgUJs" target="_blank">Chloe Ting – Abs básicos</a></li><li><a href="https://www.youtube.com/watch?v=lCg_gh_fppI" target="_blank">Move With Nicole – Core suave</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Martes · Cardio</h3><p class="minutes">40–45 min</p><ul><li><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Fausto Murillo – Cardio bajo impacto</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Miércoles · Pilates</h3><p class="minutes">30–35 min</p><ul><li><a href="https://www.youtube.com/watch?v=sF8NwVYp3js" target="_blank">Move With Nicole – Pilates</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Jueves · Fuerza</h3><p class="minutes">40–45 min</p><ul><li><a href="https://www.youtube.com/watch?v=Rj2fC8t7wL8" target="_blank">Pau Fit – Pierna y glúteo</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Viernes · Cardio + Abs</h3><p class="minutes">30–35 min</p><ul><li><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Fausto Murillo – Cardio corto</a></li><li><a href="https://www.youtube.com/watch?v=2pLT-olgUJs" target="_blank">Chloe Ting – Abs</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Sábado · Full Body</h3><p class="minutes">35–40 min</p><ul><li><a href="https://www.youtube.com/watch?v=Yzm3fA2HhkQ" target="_blank">Pilates suave</a></li></ul><button>✓ Completado</button></div>
-</div><!-- SEMANA 2 --><h2>Semana 2 · Más fluidez</h2>
-<div class="week">
-  <div class="day" onclick="toggle(this)"><h3>Lunes · Abs</h3><p class="minutes">35 min</p><ul><li><a href="https://www.youtube.com/watch?v=CGmr02bfHUo" target="_blank">Chloe Ting – Abs intermedio</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Martes · Cardio</h3><p class="minutes">45 min</p><ul><li><a href="https://www.youtube.com/watch?v=Y2eOW7XYWxc" target="_blank">Fausto Murillo – Cardio continuo</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Miércoles · Pilates</h3><p class="minutes">35 min</p><ul><li><a href="https://www.youtube.com/watch?v=Z2Pq3y0Q0fw" target="_blank">Move With Nicole – Pilates fluido</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Jueves · Fuerza</h3><p class="minutes">45 min</p><ul><li><a href="https://www.youtube.com/watch?v=6u0zGJ0KfIw" target="_blank">Steph Delmor – Fuerza</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Viernes · Cardio</h3><p class="minutes">35 min</p><ul><li><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Fausto Murillo</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Sábado · Stretch</h3><p class="minutes">35 min</p><ul><li><a href="https://www.youtube.com/watch?v=8Z2h6N7k7wY" target="_blank">Stretch completo</a></li></ul><button>✓ Completado</button></div>
-</div><!-- SEMANA 3 --><h2>Semana 3 · Quema</h2>
-<div class="week">
-  <div class="day" onclick="toggle(this)"><h3>Lunes · Abs</h3><p class="minutes">40 min</p><ul><li><a href="https://www.youtube.com/watch?v=GgVf4yJwG8Q" target="_blank">Chloe Ting – Abs intensos</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Martes · Cardio</h3><p class="minutes">50 min</p><ul><li><a href="https://www.youtube.com/watch?v=8Dzr_CwzY5Q" target="_blank">Fausto Murillo – Cardio largo</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Miércoles · Pilates</h3><p class="minutes">35 min</p><ul><li><a href="https://www.youtube.com/watch?v=sF8NwVYp3js" target="_blank">Move With Nicole</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Jueves · Fuerza</h3><p class="minutes">50 min</p><ul><li><a href="https://www.youtube.com/watch?v=Rj2fC8t7wL8" target="_blank">Pau Fit – Fuerza intensa</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Viernes · Cardio</h3><p class="minutes">40 min</p><ul><li><a href="https://www.youtube.com/watch?v=Y2eOW7XYWxc" target="_blank">Fausto Murillo</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Sábado · Stretch</h3><p class="minutes">40 min</p><ul><li><a href="https://www.youtube.com/watch?v=8Z2h6N7k7wY" target="_blank">Stretch</a></li></ul><button>✓ Completado</button></div>
-</div><!-- SEMANA 4 --><h2>Semana 4 · Constancia</h2>
-<div class="week">
-  <div class="day" onclick="toggle(this)"><h3>Lunes · Abs</h3><p class="minutes">40 min</p><ul><li><a href="https://www.youtube.com/watch?v=CGmr02bfHUo" target="_blank">Chloe Ting</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Martes · Cardio</h3><p class="minutes">45 min</p><ul><li><a href="https://www.youtube.com/watch?v=8Dzr_CwzY5Q" target="_blank">Fausto Murillo</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Miércoles · Pilates</h3><p class="minutes">35 min</p><ul><li><a href="https://www.youtube.com/watch?v=Z2Pq3y0Q0fw" target="_blank">Move With Nicole</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Jueves · Fuerza</h3><p class="minutes">45 min</p><ul><li><a href="https://www.youtube.com/watch?v=6u0zGJ0KfIw" target="_blank">Steph Delmor</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Viernes · Cardio</h3><p class="minutes">35 min</p><ul><li><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Fausto Murillo</a></li></ul><button>✓ Completado</button></div>
-  <div class="day" onclick="toggle(this)"><h3>Sábado · Stretch</h3><p class="minutes">35 min</p><ul><li><a href="https://www.youtube.com/watch?v=8Z2h6N7k7wY" target="_blank">Stretch</a></li></ul><button>✓ Completado</button></div>
+  <div class="day" onclick="toggle(this)"><h3>Lunes · Abs</h3><p class="minutes">30–35 min</p><a href="https://www.youtube.com/watch?v=2pLT-olgUJs" target="_blank">Video</a><button>✓</button></div>
+  <div class="day" onclick="toggle(this)"><h3>Martes · Cardio</h3><p class="minutes">40–45 min</p><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Video</a><button>✓</button></div>
+  <div class="day" onclick="toggle(this)"><h3>Miércoles · Pilates</h3><p class="minutes">30–35 min</p><a href="https://www.youtube.com/watch?v=sF8NwVYp3js" target="_blank">Video</a><button>✓</button></div>
+  <div class="day" onclick="toggle(this)"><h3>Jueves · Fuerza</h3><p class="minutes">40–45 min</p><a href="https://www.youtube.com/watch?v=Rj2fC8t7wL8" target="_blank">Video</a><button>✓</button></div>
+  <div class="day" onclick="toggle(this)"><h3>Viernes · Cardio</h3><p class="minutes">30–35 min</p><a href="https://www.youtube.com/watch?v=ml6cT4AZdqI" target="_blank">Video</a><button>✓</button></div>
+  <div class="day" onclick="toggle(this)"><h3>Sábado · Stretch</h3><p class="minutes">35–40 min</p><a href="https://www.youtube.com/watch?v=8Z2h6N7k7wY" target="_blank">Video</a><button>✓</button></div>
+</div><h2>Vista mensual (progreso)</h2>
+<div class="calendar">
+  <div class="cal-head">L</div><div class="cal-head">M</div><div class="cal-head">M</div><div class="cal-head">J</div><div class="cal-head">V</div><div class="cal-head">S</div><div class="cal-head">D</div>
+  <div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day done">3 ✔</div><div class="cal-day">4</div><div class="cal-day done">5 ✔</div><div class="cal-day">6</div><div class="cal-day">7</div>
+  <div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div>
 </div><script>
-function toggle(el){ el.classList.toggle('completed'); }
+const TOTAL_DAYS = 24; // 6 días x 4 semanas
+let completed = 0;
+
+function toggle(el){
+  el.classList.toggle('completed');
+  updateProgress();
+}
+
+function toggleDark(){ document.body.classList.toggle('dark'); }
+
+function updateProgress(){
+  completed = document.querySelectorAll('.day.completed').length;
+  const percent = Math.round((completed / TOTAL_DAYS) * 100);
+  document.getElementById('progressBar').style.width = percent + '%';
+  document.getElementById('progressText').innerText = percent + '% completado';
+}
 </script></body>
 </html>
