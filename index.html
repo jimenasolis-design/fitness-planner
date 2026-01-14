@@ -38,7 +38,7 @@
   <div class="nav">
     <button onclick="prevWeek()">◀ Semana</button>
     <button onclick="nextWeek()">Semana ▶</button>
-    <button onclick="showToday()">Solo hoy</button>
+    <button onclick="showToday()">Hoy</button>
     <button onclick="toggleLightWeek()">Semana ligera</button>
     <button onclick="markRest()">Descanso hoy</button>
   </div>  <h2 id="weekTitle"></h2>
@@ -46,6 +46,10 @@
   <div id="monthTitle"></div>
   <div id="monthView" class="calendar"></div>
 </div><script>
+// ===== CONFIGURACIÓN DE INICIO DEL RETO =====
+const START_DATE = new Date('2026-01-12'); // lunes 12 de enero
+
+// ===== PLAN 4 SEMANAS =====
 const plan=[
 [
 {day:'Lunes',title:'Abs',time:35,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=2pLT-olgUJs'},
@@ -80,21 +84,34 @@ const plan=[
 {day:'Sábado',title:'Stretch',time:45,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=Zk5Wz6P1Y8M'}]
 ];
 
-let week=Number(localStorage.getItem('week'))||0;
+// ===== ESTADO =====
 let completed=JSON.parse(localStorage.getItem('completed')||'{}');
 let restDays=JSON.parse(localStorage.getItem('rest')||'{}');
 let lightWeek=localStorage.getItem('light')==='true';
-const startDate=new Date(localStorage.getItem('start')||new Date());
-localStorage.setItem('start',startDate);
+
+function daysBetween(a,b){return Math.floor((b-a)/(1000*60*60*24));}
+
+function getTodayIndex(){
+  const today=new Date();
+  const diff=daysBetween(START_DATE,today);
+  return diff>=0?diff:null;
+}
+
+function getWeek(){
+  const idx=getTodayIndex();
+  return idx!==null?Math.min(3,Math.floor(idx/6)):0;
+}
 
 function render(){
+  const week=getWeek();
   document.getElementById('weekTitle').innerText=`Semana ${week+1}${lightWeek?' · Ligera':''}`;
   const w=document.getElementById('weekView');w.innerHTML='';
   plan[week].forEach((d,i)=>{
-    const id=`${week}-${i}`;
-    const div=document.createElement('div');
+    const globalIndex=week*6+i;
+    const id=globalIndex;
     let time=d.time;
-    if(lightWeek) time=Math.max(20,Math.round(d.time*0.7));
+    if(lightWeek)time=Math.max(20,Math.round(d.time*0.7));
+    const div=document.createElement('div');
     div.className='day'+(completed[id]?' completed':'')+(restDays[id]?' rest':'');
     div.onclick=()=>toggle(id);
     div.innerHTML=`<h3>${d.day} · ${d.title}</h3><p>${time} min · ${d.by}</p><a href="${d.url}" target="_blank">Ir al video</a>`;
@@ -104,30 +121,33 @@ function render(){
 }
 
 function toggle(id){if(restDays[id])return;completed[id]=!completed[id];localStorage.setItem('completed',JSON.stringify(completed));render();}
-function markRest(){const todayId=`${week}-0`;restDays[todayId]=true;localStorage.setItem('rest',JSON.stringify(restDays));render();}
+function markRest(){const idx=getTodayIndex();if(idx!==null){restDays[idx]=true;localStorage.setItem('rest',JSON.stringify(restDays));render();}}
 function toggleLightWeek(){lightWeek=!lightWeek;localStorage.setItem('light',lightWeek);render();}
 function updateProgress(){const total=24;const done=Object.values(completed).filter(Boolean).length;const p=Math.round(done/total*100);progressBar.style.width=p+'%';progressText.innerText=p+'%';}
 function toggleDark(){document.body.classList.toggle('dark');localStorage.setItem('dark',document.body.classList.contains('dark'));}
-function prevWeek(){if(week>0){week--;localStorage.setItem('week',week);render();}}
-function nextWeek(){if(week<3){week++;localStorage.setItem('week',week);render();}}
+function prevWeek(){render();}
+function nextWeek(){render();}
 function showToday(){render();}
 
 function renderMonth(){
   const m=document.getElementById('monthView');m.innerHTML='';
   const t=document.getElementById('monthTitle');
-  const d=new Date(startDate);
-  t.innerText=d.toLocaleString('es',{month:'long',year:'numeric'});
-  const first=new Date(d.getFullYear(),d.getMonth(),1);
-  const last=new Date(d.getFullYear(),d.getMonth()+1,0);
+  const base=new Date(START_DATE);
+  const today=new Date();
+  const view=new Date(today.getFullYear(),today.getMonth(),1);
+  t.innerText=view.toLocaleString('es',{month:'long',year:'numeric'});
+  const first=new Date(view.getFullYear(),view.getMonth(),1);
+  const last=new Date(view.getFullYear(),view.getMonth()+1,0);
   const days=['L','M','X','J','V','S','D'];
   days.forEach(x=>{const h=document.createElement('div');h.className='cal-head';h.innerText=x;m.appendChild(h);});
   let offset=(first.getDay()+6)%7;
   for(let i=0;i<offset;i++)m.appendChild(document.createElement('div'));
   for(let i=1;i<=last.getDate();i++){
+    const date=new Date(view.getFullYear(),view.getMonth(),i);
+    const idx=daysBetween(base,date);
     const c=document.createElement('div');c.className='cal-day';
-    const key=`${Math.floor((i-1)/6)}-${(i-1)%6}`;
-    if(completed[key])c.classList.add('completed');
-    if(restDays[key])c.classList.add('rest');
+    if(completed[idx])c.classList.add('completed');
+    if(restDays[idx])c.classList.add('rest');
     c.innerHTML=`<strong>${i}</strong>`;
     m.appendChild(c);
   }
