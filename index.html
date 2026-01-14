@@ -1,30 +1,34 @@
 <!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Fitness Planner</title>
   <style>
-    :root{
-      --bg:#f5f5f5;--text:#222;--card:#fff;--accent:#8b5cf6;
-    }
-    body.dark{
-      --bg:#121212;--text:#eee;--card:#1e1e1e;--accent:#a78bfa;
-    }
-    body{margin:0;font-family:sans-serif;background:var(--bg);color:var(--text);}
-    .topbar{padding:16px;display:flex;justify-content:space-between;align-items:center;}
-    .container{padding:16px;max-width:900px;margin:auto;}
-    .week,.month{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
-    .day{background:var(--card);padding:12px;border-radius:12px;cursor:pointer;}
-    .day.completed{opacity:.6;text-decoration:line-through;}
-    button{padding:6px 10px;border:none;border-radius:8px;cursor:pointer;}
-    .nav{display:flex;gap:8px;margin:12px 0;}
+    :root{--bg:#f5f5f5;--text:#222;--card:#fff;--accent:#8b5cf6;--muted:#999}
+    body.dark{--bg:#121212;--text:#eee;--card:#1e1e1e;--accent:#a78bfa;--muted:#666}
+    body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--text)}
+    .topbar{padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+    .container{padding:16px;max-width:1000px;margin:auto}
+    .nav{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+    .week{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .day{background:var(--card);padding:12px;border-radius:14px;cursor:pointer}
+    .day.completed{opacity:.6;text-decoration:line-through}
+    .day.rest{opacity:.5;background:rgba(0,0,0,.05)}
+    .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+    .cal-day{background:var(--card);padding:8px;border-radius:10px;font-size:12px;min-height:60px}
+    .cal-day.completed{background:rgba(139,92,246,.25)}
+    .cal-day.rest{background:rgba(100,100,100,.15)}
+    .cal-head{font-weight:600;text-align:center}
+    button{padding:8px 12px;border:none;border-radius:10px;cursor:pointer}
+    @media(max-width:600px){.topbar h1{font-size:18px}}
   </style>
 </head>
 <body>
 <div class="topbar">
-  <h1>Mi Fitness Planner</h1>
+  <h1>Mi Fitness Planner · 4 semanas</h1>
   <div>
     <div style="font-size:12px">Progreso</div>
-    <div style="width:120px;height:10px;background:var(--card);border-radius:10px;overflow:hidden">
+    <div style="width:140px;height:10px;background:var(--card);border-radius:10px;overflow:hidden">
       <div id="progressBar" style="height:100%;width:0;background:var(--accent)"></div>
     </div>
     <div id="progressText" style="font-size:12px">0%</div>
@@ -35,57 +39,97 @@
     <button onclick="prevWeek()">◀ Semana</button>
     <button onclick="nextWeek()">Semana ▶</button>
     <button onclick="showToday()">Solo hoy</button>
+    <button onclick="toggleLightWeek()">Semana ligera</button>
+    <button onclick="markRest()">Descanso hoy</button>
   </div>  <h2 id="weekTitle"></h2>
   <div id="weekView" class="week"></div>  <h2>Calendario mensual</h2>
-  <div id="monthView" class="month"></div>
+  <div id="monthTitle"></div>
+  <div id="monthView" class="calendar"></div>
 </div><script>
-const plan = [
-  [
-    {day:'Lunes',title:'Abs',time:'30–35 min',by:'Chloe Ting',url:'https://www.youtube.com/watch?v=2pLT-olgUJs'},
-    {day:'Martes',title:'Cardio',time:'40–45 min',by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=ml6cT4AZdqI'},
-    {day:'Miércoles',title:'Pilates',time:'30–35 min',by:'Move With Nicole',url:'https://www.youtube.com/watch?v=sF8NwVYp3js'},
-    {day:'Jueves',title:'Fuerza',time:'40–45 min',by:'Pau Fit',url:'https://www.youtube.com/watch?v=Rj2fC8t7wL8'},
-    {day:'Viernes',title:'Cardio',time:'30–35 min',by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=ml6cT4AZdqI'},
-    {day:'Sábado',title:'Stretch',time:'35–40 min',by:'Stretch',url:'https://www.youtube.com/watch?v=8Z2h6N7k7wY'}
-  ],
-  // semanas 2–4 (mismo patrón, videos distintos)
+const plan=[
+[
+{day:'Lunes',title:'Abs',time:35,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=2pLT-olgUJs'},
+{day:'Martes',title:'Cardio',time:45,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=ml6cT4AZdqI'},
+{day:'Miércoles',title:'Pilates',time:35,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=sF8NwVYp3js'},
+{day:'Jueves',title:'Fuerza',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=Rj2fC8t7wL8'},
+{day:'Viernes',title:'Cardio',time:35,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=ml6cT4AZdqI'},
+{day:'Sábado',title:'Stretch',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=8Z2h6N7k7wY'}]
+,
+[
+{day:'Lunes',title:'Abs',time:35,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=VKxv6f5J8xw'},
+{day:'Martes',title:'Cardio',time:45,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=F6x3F6ZC3Jk'},
+{day:'Miércoles',title:'Pilates',time:35,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=lCg_gh_fppI'},
+{day:'Jueves',title:'Fuerza',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=8KqvX5K6L5U'},
+{day:'Viernes',title:'Cardio',time:35,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=0k6H0xkQp1E'},
+{day:'Sábado',title:'Stretch',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=JZ7s1mJjZxQ'}]
+,
+[
+{day:'Lunes',title:'Abs',time:40,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=9pGfKkYzY7M'},
+{day:'Martes',title:'Cardio',time:50,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=VHyGqsPOUHs'},
+{day:'Miércoles',title:'Pilates',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=K56Z12XNQ5Y'},
+{day:'Jueves',title:'Fuerza',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=3S5l9Z4cZYo'},
+{day:'Viernes',title:'Cardio',time:40,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=9yG0Z0nYzYI'},
+{day:'Sábado',title:'Stretch',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=Eml2xnoLpYE'}]
+,
+[
+{day:'Lunes',title:'Abs',time:40,by:'Chloe Ting',url:'https://www.youtube.com/watch?v=3p8EBPVZ2Iw'},
+{day:'Martes',title:'Cardio',time:50,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=4U9vKz0o2Hg'},
+{day:'Miércoles',title:'Pilates',time:40,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=v0q3jKz9E0Q'},
+{day:'Jueves',title:'Fuerza',time:45,by:'Pau Fit',url:'https://www.youtube.com/watch?v=2K1p8mFz1JQ'},
+{day:'Viernes',title:'Cardio',time:40,by:'Fausto Murillo',url:'https://www.youtube.com/watch?v=1Xx5ZK2Y9Hg'},
+{day:'Sábado',title:'Stretch',time:45,by:'Move With Nicole',url:'https://www.youtube.com/watch?v=Zk5Wz6P1Y8M'}]
 ];
 
-let week = Number(localStorage.getItem('week')) || 0;
-let completed = JSON.parse(localStorage.getItem('completed')||'{}');
+let week=Number(localStorage.getItem('week'))||0;
+let completed=JSON.parse(localStorage.getItem('completed')||'{}');
+let restDays=JSON.parse(localStorage.getItem('rest')||'{}');
+let lightWeek=localStorage.getItem('light')==='true';
+const startDate=new Date(localStorage.getItem('start')||new Date());
+localStorage.setItem('start',startDate);
 
 function render(){
-  document.getElementById('weekTitle').innerText = `Semana ${week+1}`;
-  const w = document.getElementById('weekView'); w.innerHTML='';
-  plan[0].forEach((d,i)=>{
-    const id = `${week}-${i}`;
-    const div = document.createElement('div');
-    div.className = 'day'+(completed[id]?' completed':'');
-    div.onclick=()=>toggle(id,div);
-    div.innerHTML=`<h3>${d.day} · ${d.title}</h3><p>${d.time} · ${d.by}</p><a href="${d.url}" target="_blank">Ir al video</a>`;
+  document.getElementById('weekTitle').innerText=`Semana ${week+1}${lightWeek?' · Ligera':''}`;
+  const w=document.getElementById('weekView');w.innerHTML='';
+  plan[week].forEach((d,i)=>{
+    const id=`${week}-${i}`;
+    const div=document.createElement('div');
+    let time=d.time;
+    if(lightWeek) time=Math.max(20,Math.round(d.time*0.7));
+    div.className='day'+(completed[id]?' completed':'')+(restDays[id]?' rest':'');
+    div.onclick=()=>toggle(id);
+    div.innerHTML=`<h3>${d.day} · ${d.title}</h3><p>${time} min · ${d.by}</p><a href="${d.url}" target="_blank">Ir al video</a>`;
     w.appendChild(div);
   });
-  renderMonth(); updateProgress();
+  renderMonth();updateProgress();
 }
 
-function toggle(id,el){completed[id]=!completed[id];localStorage.setItem('completed',JSON.stringify(completed));render();}
-function updateProgress(){
-  const total=24;
-  const done=Object.values(completed).filter(Boolean).length;
-  const p=Math.round(done/total*100);
-  progressBar.style.width=p+'%';progressText.innerText=p+'%';
-}
+function toggle(id){if(restDays[id])return;completed[id]=!completed[id];localStorage.setItem('completed',JSON.stringify(completed));render();}
+function markRest(){const todayId=`${week}-0`;restDays[todayId]=true;localStorage.setItem('rest',JSON.stringify(restDays));render();}
+function toggleLightWeek(){lightWeek=!lightWeek;localStorage.setItem('light',lightWeek);render();}
+function updateProgress(){const total=24;const done=Object.values(completed).filter(Boolean).length;const p=Math.round(done/total*100);progressBar.style.width=p+'%';progressText.innerText=p+'%';}
 function toggleDark(){document.body.classList.toggle('dark');localStorage.setItem('dark',document.body.classList.contains('dark'));}
 function prevWeek(){if(week>0){week--;localStorage.setItem('week',week);render();}}
 function nextWeek(){if(week<3){week++;localStorage.setItem('week',week);render();}}
-function showToday(){week=0;render();}
+function showToday(){render();}
+
 function renderMonth(){
   const m=document.getElementById('monthView');m.innerHTML='';
-  for(let i=0;i<24;i++){
-    const div=document.createElement('div');
-    div.className='day'+(completed[Math.floor(i/6)+'-'+(i%6)]?' completed':'');
-    div.innerText='Día '+(i+1);
-    m.appendChild(div);
+  const t=document.getElementById('monthTitle');
+  const d=new Date(startDate);
+  t.innerText=d.toLocaleString('es',{month:'long',year:'numeric'});
+  const first=new Date(d.getFullYear(),d.getMonth(),1);
+  const last=new Date(d.getFullYear(),d.getMonth()+1,0);
+  const days=['L','M','X','J','V','S','D'];
+  days.forEach(x=>{const h=document.createElement('div');h.className='cal-head';h.innerText=x;m.appendChild(h);});
+  let offset=(first.getDay()+6)%7;
+  for(let i=0;i<offset;i++)m.appendChild(document.createElement('div'));
+  for(let i=1;i<=last.getDate();i++){
+    const c=document.createElement('div');c.className='cal-day';
+    const key=`${Math.floor((i-1)/6)}-${(i-1)%6}`;
+    if(completed[key])c.classList.add('completed');
+    if(restDays[key])c.classList.add('rest');
+    c.innerHTML=`<strong>${i}</strong>`;
+    m.appendChild(c);
   }
 }
 
