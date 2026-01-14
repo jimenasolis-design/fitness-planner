@@ -1,39 +1,50 @@
 BEGIN:VCALENDAR
 VERSION:2.0
+PRODID:-//Fitness Planner//ES
 CALSCALE:GREGORIAN
-PRODID:-//Fitness Planner Jimena//ES
+METHOD:PUBLISH
 
 BEGIN:VEVENT
-UID:fausto-cardio-1@fitness
-DTSTAMP:20260114T030000Z
-DTSTART:20260114T203000
-DTEND:20260114T210000
-SUMMARY:Cardio – Fausto Murillo
-DESCRIPTION:Cardio moderado. Video de YouTube.
+SUMMARY:🏋️ Tren Inferior (Día 1)
+DTSTART;VALUE=DATE:20260112
+DURATION:PT1H
+RRULE:FREQ=WEEKLY;COUNT=4
+DESCRIPTION:Sentadilla libre, Prensa de piernas, Extensiones de cuádriceps, Curl femoral, Elevación de talones.
 END:VEVENT
 
 BEGIN:VEVENT
-UID:nicole-pilates-1@fitness
-DTSTAMP:20260115T030000Z
-DTSTART:20260115T203000
-DTEND:20260115T210000
-SUMMARY:Pilates – Move with Nicole
-DESCRIPTION:Pilates y core.
+SUMMARY:💪 Tren Superior - Empuje (Día 2)
+DTSTART;VALUE=DATE:20260113
+DURATION:PT1H
+RRULE:FREQ=WEEKLY;COUNT=4
+DESCRIPTION:Press de banca, Press militar, Aperturas con mancuernas, Elevaciones laterales, Extensión de tríceps.
 END:VEVENT
 
 BEGIN:VEVENT
-UID:paufit-fuerza-1@fitness
-DTSTAMP:20260116T030000Z
-DTSTART:20260116T203000
-DTEND:20260116T211500
-SUMMARY:Fuerza – Pau Fit
-DESCRIPTION:Fuerza pierna y glúteo.
+SUMMARY:🏃 Core y Cardio (Día 3)
+DTSTART;VALUE=DATE:20260114
+DURATION:PT1H
+RRULE:FREQ=WEEKLY;COUNT=4
+DESCRIPTION:Plancha abdominal, Deadbug, Rueda abdominal, 20-30 min de cardio moderado.
 END:VEVENT
 
 BEGIN:VEVENT
-UID:fausto-cardio-2@fitness
-DTSTAMP:20260117T030000Z
-DTSTART:20260117T203000
+SUMMARY:🧗 Tren Superior - Tracción (Día 4)
+DTSTART;VALUE=DATE:20260115
+DURATION:PT1H
+RRULE:FREQ=WEEKLY;COUNT=4
+DESCRIPTION:Dominadas o Jalón al pecho, Remo con barra, Face pulls, Curl de bíceps, Encogimientos de hombros.
+END:VEVENT
+
+BEGIN:VEVENT
+SUMMARY:🔥 Full Body / Repaso (Día 5)
+DTSTART;VALUE=DATE:20260116
+DURATION:PT1H
+RRULE:FREQ=WEEKLY;COUNT=4
+DESCRIPTION:Peso muerto, Press inclinado, Zancadas (Lunges), Press Arnold, Plancha lateral.
+END:VEVENT
+
+END:VCALENDAR
 DTEND:20260117T211500
 SUMMARY:Cardio – Fausto Murillo
 DESCRIPTION:Cardio cuerpo completo.
