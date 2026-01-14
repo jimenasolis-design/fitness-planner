@@ -90,6 +90,8 @@ const plan=[
 let completed=JSON.parse(localStorage.getItem('completed')||'{}');
 let restDays=JSON.parse(localStorage.getItem('rest')||'{}');
 let lightWeek=localStorage.getItem('light')==='true';
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
 let currentWeek=null; // semana que el usuario está viendo
 
 function daysBetween(a,b){return Math.floor((b-a)/(1000*60*60*24));}
